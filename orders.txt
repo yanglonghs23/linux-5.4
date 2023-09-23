@@ -1,0 +1,18 @@
+make distclean O=./build
+cp /boot/config-5.4.0-144-generic ./build/.config
+make oldconfig O=./build
+# make menuconfig O=./build
+# make defconfig O=./build ARCH=arm64
+scripts/config --disable SYSTEM_TRUSTED_KEY --file ./build/.config && scripts/config --disable SYSTEM_REVOCATION_KEYS --file ./build/.config
+make all -j 4 O=./build
+make vmlinux -j 4 O=./build
+make modules -j 4 O=./build
+make bzImage -j 4 O=./build
+sudo make modules_install O=./build
+sudo make install O=./build
+
+
+// 交叉编译
+cp ./arch/arm64/configs/defconfig .config
+make ARCH=arm menuconfig
+make ARCH=arm CROSS_COMPILE=arm-none-eabi- bzImage -j 4
